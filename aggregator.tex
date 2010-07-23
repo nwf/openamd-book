@@ -1,0 +1,62 @@
+\chapter{Aggregator}
+\label{sec:aggregator}
+
+The aggregator is the software interface
+between the readers and all subsequent stages of the pipeline.
+It is the first stage of the pipeline
+that has total visibility of the system.
+It serves two purposes at present:
+\begin{itemize}
+    \item It decapsulates sensor data.
+    \item By using joint observations
+        of tags' beacons by multiple readers,
+        it estimates beacon position.
+\end{itemize}
+
+\section{Position Estimation}
+
+The position estimation algorithm
+at present
+is quite simplistic,
+using a sliding window average
+of observations.
+It assumes that reader identifiers
+(IPv4 addresses)
+have been mapped
+to (X,Y,Z) positions in space.
+Each observed beacon's reader's position
+is weighted
+by the inverse
+of the transmission strength
+noted in the beacon.
+All such weighted positions
+for a window worth of sequence numbers
+are averaged to obtain
+the present guess at position.
+
+This technique assumes that readers well
+exceed the set of plausible positions,
+which is unlikely to be true.
+
+\subsection{Area Labeling}
+
+As a convenience,
+the aggregator also maps $(X,Y,Z)$ positions
+onto arbitrary labels,
+which are additionally reported upstream.
+This is done simply as a convenience
+for upstream modules.
+Currently, the lookup is done
+with a binary space partition tree.
+
+\section{Aggregator Output}
+
+The aggregator reports
+once per second
+per active badge
+the current timestamp,
+the badge's estimated $(X,Y,Z)$ position,
+the number of beacons observed in the window,
+the area label,
+the most recent interesting beacon ``flags'' value,
+and the timestamp of that observation.
